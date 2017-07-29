@@ -1,0 +1,144 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head lang="en-us">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+	<meta name="description" content="Running jobs on a cluster">
+	<meta name="generator" content="Hugo 0.24.1" />
+	
+	<title>Using resources effectively &mdash; Intro to HPC</title>
+	
+	<link rel="stylesheet" href="https://jstaf.github.io/hpc-intro/css/alabaster.css" type="text/css" />
+	<link rel="stylesheet" href="https://jstaf.github.io/hpc-intro/css/highlight.css" type="text/css" />
+
+	
+
+	<link rel="shortcut icon" href="https://jstaf.github.io/hpc-intro/favicon.ico" type="image/x-icon"/>
+</head>
+
+	<body role="document">
+		<div class="document">
+			<div class="documentwrapper">
+				<div class="bodywrapper">
+					<div class="body" role="main">
+						
+	<h1>Using resources effectively</h1>
+	
+	
+
+<p>We now know virtually everything we need to know about getting stuff on a cluster.
+We can log on, submit different types of jobs, use preinstalled software,
+and install and use software of our own.
+What we need to do now is use the systems effectively.</p>
+
+<h2 id="estimating-required-resources-using-the-scheduler">Estimating required resources using the scheduler</h2>
+
+<p>Although we covered requesting resources from the scheduler earlier,
+how do we know how much and what type of resources we will need in the first place?</p>
+
+<p>Answer: we don&rsquo;t.
+Not until we&rsquo;ve tried it ourselves at least once.
+We&rsquo;ll need to benchmark our job and experiment with it before
+we know how much it needs in the way of resources.</p>
+
+<p>The most effective way of figuring out how much resources a job needs is to submit a test job,
+and then ask the scheduler how many resources it used.
+A good rule of thumb is to ask the scheduler for more time and memory than your job can use.
+This value is typically two to three times what you think your job will need.</p>
+
+<p>Using some of the data we downloaded from the last section.</p>
+
+<h2 id="playing-nice">Playing nice</h2>
+
+
+
+						
+					</div>
+				</div>
+			</div>
+			
+			<div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+	<div class="sphinxsidebarwrapper">
+		<p class="logo">
+			<a href="https://jstaf.github.io/hpc-intro/">
+				<img class="logo" src="https://jstaf.github.io/hpc-intro/favicon.ico" alt="Logo"/>
+				<h1 class="logo logo-name">Intro to HPC</h1>
+			</a>
+		</p>
+		
+		<p class="blurb">Running jobs on a cluster</p>
+
+		
+
+	
+
+	
+
+	
+		
+
+		
+
+<h3>Navigation</h3>
+<ul>
+	
+	<li class="toctree-l1">
+		<a class="reference internal" href="/hpc-intro/">Intro to High-Performance Computing</a>
+	</li>
+	
+	<li class="toctree-l1">
+		<a class="reference internal" href="/hpc-intro/cluster/">What is a cluster</a>
+	</li>
+	
+	<li class="toctree-l1">
+		<a class="reference internal" href="/hpc-intro/scheduler/">Scheduling jobs</a>
+	</li>
+	
+	<li class="toctree-l1">
+		<a class="reference internal" href="/hpc-intro/modules/">Accessing software</a>
+	</li>
+	
+	<li class="toctree-l1">
+		<a class="reference internal" href="/hpc-intro/transferring-files/">Transferring Files</a>
+	</li>
+	
+	<li class="toctree-l1">
+		<a class="reference internal" href="/hpc-intro/resources/">Using resources effectively</a>
+	</li>
+	
+</ul>
+
+
+		<h3>Related Topics</h3>
+<ul>
+  <li><a href="https://jstaf.github.io/hpc-intro/">Documentation overview</a><ul>
+  
+  
+</ul>
+
+	</div>
+</div>
+<div class="clearer"></div>
+</div>
+			<div class="footer">
+	&copy; 2017 <a href="https://github.com/jstaf">Jeff Stafford</a>
+	|
+	Powered by <a href="http://gohugo.io/">Hugo 0.24.1</a>
+	&amp; <a href="https://github.com/digitalcraftsman/hugo-alabaster-theme">Alabaster</a>
+	
+</div>
+
+
+
+
+			
+
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/highlight.min.js"></script>
+			<script>hljs.initHighlightingOnLoad();</script>
+			
+
+			
+		</div>
+	</body>
+</html>

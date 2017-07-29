@@ -1,0 +1,239 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head lang="en-us">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+	<meta name="description" content="Running jobs on a cluster">
+	<meta name="generator" content="Hugo 0.24.1" />
+	
+	<title>What is a cluster &mdash; Intro to HPC</title>
+	
+	<link rel="stylesheet" href="https://jstaf.github.io/hpc-intro/css/alabaster.css" type="text/css" />
+	<link rel="stylesheet" href="https://jstaf.github.io/hpc-intro/css/highlight.css" type="text/css" />
+
+	
+
+	<link rel="shortcut icon" href="https://jstaf.github.io/hpc-intro/favicon.ico" type="image/x-icon"/>
+</head>
+
+	<body role="document">
+		<div class="document">
+			<div class="documentwrapper">
+				<div class="bodywrapper">
+					<div class="body" role="main">
+						
+	<h1>What is a cluster</h1>
+	
+	
+
+<p>The words &ldquo;cloud&rdquo;, &ldquo;cluster&rdquo;, and &ldquo;high-performance computing&rdquo; get thrown around a lot.
+So what do they mean exactly?
+And more importantly, how do we use them for our work?</p>
+
+<p>The &ldquo;cloud&rdquo; is a generic term commonly used to refer to remote computing resources.
+Cloud can refer to webservers, remote storage, API endpoints, and as well as more traditional &ldquo;raw compute&rdquo; resources.
+A cluster on the other hand, is a term used to describe a network of compters.
+Machines in a cluster typically share a common purpose,
+and are used to accomplish tasks that might otherwise be too substantial for any one machine.</p>
+
+<p><img src="../files/linux-cloud.jpg" alt="The cloud is made of Linux" /></p>
+
+<h2 id="high-performance-computing">High performance computing</h2>
+
+<p>A high-performance computing cluster is a set of machines that have been
+designed to handle tasks that normal computers can&rsquo;t handle.
+This doesn&rsquo;t always mean simply having super fast processors.
+High-performance computing covers a lot of use cases.
+Here are a couple of use cases where high-performance computing becomes extremely useful:</p>
+
+<ul>
+<li>You need access to large numbers of CPUs.</li>
+<li>You need to run a large number of jobs.</li>
+<li>Your jobs are running out of memory.</li>
+<li>Perhaps you need to store tons and tons of data.</li>
+<li>You require an exceptionally high-bandwidth internet connection for data transfer.</li>
+<li>You need a safe archival site for your data.</li>
+<li>Your compute jobs require specialized GPU or FPGA hardware.</li>
+<li>Maybe your jobs just take a long time to run.</li>
+</ul>
+
+<p>Chances are, you&rsquo;ve run into one of these situations before.
+Fortunately, high-performance computing installations exist to solve these types of problems.</p>
+
+<p>With all of this in mind, let&rsquo;s connect to a cluster (if you haven&rsquo;t done so already!).
+For these examples, we will connect to Frontenac - a high-performance cluster currently under construction.
+Although it&rsquo;s unlikely that every system will be exactly like Frontenac,
+it&rsquo;s a very good example of what you can expect from a supercomputing installation.
+To connect to our example computer, we will use SSH.</p>
+
+<h2 id="logging-onto-the-cluster">Logging onto the cluster</h2>
+
+<p>SSH allows us to connect to UNIX computers remotely, and use them as if they were our own.
+The general syntax of the connection command follows the format <code>ssh yourUsername@some.computer.address</code>
+Let&rsquo;s attempt to connect to the cluster now:</p>
+
+<pre><code>ssh yourUsername@login.cac.queensu.ca
+</code></pre>
+
+<pre><code>The authenticity of host 'caclogin01.computecanada.ca (199.241.166.2)' can't be established.
+ECDSA key fingerprint is SHA256:JRj286Pkqh6aeO5zx1QUkS8un5fpcapmezusceSGhok.
+ECDSA key fingerprint is MD5:99:59:db:b1:3f:18:d0:2c:49:4e:c2:74:86:ac:f7:c6.
+Are you sure you want to continue connecting (yes/no)?  # type &quot;yes&quot;!
+Warning: Permanently added the ECDSA host key for IP address '199.241.166.2' to the list of known hosts.
+yourUsername@login.cac.queensu.ca's password:  # no text appears as you enter your password
+Last login: Wed Jun 28 16:16:20 2017 from s2.n59.queensu.ca
+</code></pre>
+
+<p>If you&rsquo;ve connected successfully, you should see a prompt like the one below.
+This prompt is informative, and lets you grasp certain information at a glance:
+in this case <code>[yourUsername@computerName workingDirectory]$</code>.</p>
+
+<pre><code class="language-output">[yourUsername@caclogin01 ~]$
+</code></pre>
+
+<h2 id="where-are-we">Where are we?</h2>
+
+<p>Very often, many users are tempted to think of a high-performance computing installation as one giant, magical machine.
+Sometimes, people even assume that the machine they&rsquo;ve logged onto is the entire computing cluster.
+So what&rsquo;s really happening? What machine have we logged on to?
+The name of the current computer we are logged onto can be checked with the <code>hostname</code> command.
+(Clever users will notice that the current hostname is also part of our prompt!)</p>
+
+<pre><code>hostname
+</code></pre>
+
+<pre><code>caclogin01
+</code></pre>
+
+<p>Clusters have different types of machines customized for different types of tasks.
+In this case, we are on a login node.
+A login node serves as a gateway to the cluster and serves as a single point of access.
+As a gateway, it is well suited for uploading and downloading files, setting up software, and running quick tests.
+It should never be used for doing actual work.</p>
+
+<p>The real work on a cluster gets done by the &ldquo;worker&rdquo; nodes.
+Worker nodes come in many shapes and sizes, but generally are dedicated to doing all of the heavy lifting that needs doing.
+All interaction with the worker nodes is handled by a specialized piece of software called a scheduler (called SLURM, in this case).
+We can view all of the worker nodes with the <code>sinfo</code> command.</p>
+
+<pre><code>sinfo
+</code></pre>
+
+<pre><code>PARTITION AVAIL  TIMELIMIT  NODES  STATE NODELIST
+standard*    up 14-00:00:0      1    mix cac101
+standard*    up 14-00:00:0      5   idle cac[100,102-105]
+</code></pre>
+
+<p>There are also specialized machines used for managing disk storage, user authentication,
+and other infrastructure-related tasks.
+Although we do not interact with these directly,
+but these enable a number of key features like ensuring our user account and files are available throughout the cluster.
+This is an important point to remember:
+files saved on one node (computer) are available everywhere on the cluster!</p>
+
+<p>In this particular case, I&rsquo;ve &ldquo;hidden&rdquo; several nodes specifically for use in our summer school.
+You can view these with <code>sinfo -a</code>.</p>
+
+<pre><code>sinfo -a 
+</code></pre>
+
+<pre><code>PARTITION     AVAIL  TIMELIMIT  NODES  STATE NODELIST
+standard*        up 14-00:00:0      1    mix cac101
+standard*        up 14-00:00:0      5   idle cac[100,102-105]
+summer-school    up   infinite      6   idle cac[094-099]
+</code></pre>
+
+<h2 id="next-section-scheduler"><a href="../scheduler/">Next section</a></h2>
+
+
+
+						
+					</div>
+				</div>
+			</div>
+			
+			<div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+	<div class="sphinxsidebarwrapper">
+		<p class="logo">
+			<a href="https://jstaf.github.io/hpc-intro/">
+				<img class="logo" src="https://jstaf.github.io/hpc-intro/favicon.ico" alt="Logo"/>
+				<h1 class="logo logo-name">Intro to HPC</h1>
+			</a>
+		</p>
+		
+		<p class="blurb">Running jobs on a cluster</p>
+
+		
+
+	
+
+	
+
+	
+		
+
+		
+
+<h3>Navigation</h3>
+<ul>
+	
+	<li class="toctree-l1">
+		<a class="reference internal" href="/hpc-intro/">Intro to High-Performance Computing</a>
+	</li>
+	
+	<li class="toctree-l1">
+		<a class="reference internal" href="/hpc-intro/cluster/">What is a cluster</a>
+	</li>
+	
+	<li class="toctree-l1">
+		<a class="reference internal" href="/hpc-intro/scheduler/">Scheduling jobs</a>
+	</li>
+	
+	<li class="toctree-l1">
+		<a class="reference internal" href="/hpc-intro/modules/">Accessing software</a>
+	</li>
+	
+	<li class="toctree-l1">
+		<a class="reference internal" href="/hpc-intro/transferring-files/">Transferring Files</a>
+	</li>
+	
+	<li class="toctree-l1">
+		<a class="reference internal" href="/hpc-intro/resources/">Using resources effectively</a>
+	</li>
+	
+</ul>
+
+
+		<h3>Related Topics</h3>
+<ul>
+  <li><a href="https://jstaf.github.io/hpc-intro/">Documentation overview</a><ul>
+  
+  
+</ul>
+
+	</div>
+</div>
+<div class="clearer"></div>
+</div>
+			<div class="footer">
+	&copy; 2017 <a href="https://github.com/jstaf">Jeff Stafford</a>
+	|
+	Powered by <a href="http://gohugo.io/">Hugo 0.24.1</a>
+	&amp; <a href="https://github.com/digitalcraftsman/hugo-alabaster-theme">Alabaster</a>
+	
+</div>
+
+
+
+
+			
+
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/highlight.min.js"></script>
+			<script>hljs.initHighlightingOnLoad();</script>
+			
+
+			
+		</div>
+	</body>
+</html>

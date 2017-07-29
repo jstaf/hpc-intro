@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Intro to HPC</title>
+    <link>https://jstaf.github.io/hpc-intro/</link>
+    <description>Recent content on Intro to HPC</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    
+	<atom:link href="https://jstaf.github.io/hpc-intro/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Intro to High-Performance Computing</title>
+      <link>https://jstaf.github.io/hpc-intro/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://jstaf.github.io/hpc-intro/</guid>
+      <description>placeholder</description>
+    </item>
+    
+    <item>
+      <title>What is a cluster</title>
+      <link>https://jstaf.github.io/hpc-intro/cluster/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://jstaf.github.io/hpc-intro/cluster/</guid>
+      <description>The words &amp;ldquo;cloud&amp;rdquo;, &amp;ldquo;cluster&amp;rdquo;, and &amp;ldquo;high-performance computing&amp;rdquo; get thrown around a lot. So what do they mean exactly? And more importantly, how do we use them for our work?
+The &amp;ldquo;cloud&amp;rdquo; is a generic term commonly used to refer to remote computing resources. Cloud can refer to webservers, remote storage, API endpoints, and as well as more traditional &amp;ldquo;raw compute&amp;rdquo; resources. A cluster on the other hand, is a term used to describe a network of compters.</description>
+    </item>
+    
+    <item>
+      <title>Scheduling jobs</title>
+      <link>https://jstaf.github.io/hpc-intro/scheduler/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://jstaf.github.io/hpc-intro/scheduler/</guid>
+      <description>An HPC system might have thousands of nodes and thousands of users. How do we decide who gets what and when? How do we ensure that a task is run with the resources it needs? This job is handled by a special piece of software called the scheduler. On an HPC system, the scheduler manages which jobs run where and when.
+The scheduler used in this lesson is SLURM. Although SLURM is not used everywhere, running jobs is quite similar regardless of what software is being used.</description>
+    </item>
+    
+    <item>
+      <title>Accessing software</title>
+      <link>https://jstaf.github.io/hpc-intro/modules/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://jstaf.github.io/hpc-intro/modules/</guid>
+      <description>On a high-performance computing system, no software is loaded by default. If we want to use a software package, we will need to &amp;ldquo;load&amp;rdquo; it ourselves.
+Before we start using individual software packages, however, we should understand the reasoning behind this approach. The two biggest factors are software incompatibilities and versioning.
+Software incompatibility is a major headache for programmers. Sometimes the presence (or absence) of a software package will break others that depend on it.</description>
+    </item>
+    
+    <item>
+      <title>Transferring Files</title>
+      <link>https://jstaf.github.io/hpc-intro/transferring-files/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://jstaf.github.io/hpc-intro/transferring-files/</guid>
+      <description>One thing people very frequently struggle with is transferring files to and from a cluster. We&amp;rsquo;ll cover several methods of doing this from the command line, then cover how to do this using the GUI program FileZilla, which is much more straightforwards.
+Grabbing files from the internet To download files from the internet, the absolute best tool is wget. The syntax is relatively straightforwards: wget https://some/link/to/a/file.tar.gz
+Downloading the Drosophila genome</description>
+    </item>
+    
+    <item>
+      <title>Using resources effectively</title>
+      <link>https://jstaf.github.io/hpc-intro/resources/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://jstaf.github.io/hpc-intro/resources/</guid>
+      <description>We now know virtually everything we need to know about getting stuff on a cluster. We can log on, submit different types of jobs, use preinstalled software, and install and use software of our own. What we need to do now is use the systems effectively.
+Estimating required resources using the scheduler Although we covered requesting resources from the scheduler earlier, how do we know how much and what type of resources we will need in the first place?</description>
+    </item>
+    
+  </channel>
+</rss>

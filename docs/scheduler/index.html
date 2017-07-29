@@ -1,0 +1,425 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head lang="en-us">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+	<meta name="description" content="Running jobs on a cluster">
+	<meta name="generator" content="Hugo 0.24.1" />
+	
+	<title>Scheduling jobs &mdash; Intro to HPC</title>
+	
+	<link rel="stylesheet" href="https://jstaf.github.io/hpc-intro/css/alabaster.css" type="text/css" />
+	<link rel="stylesheet" href="https://jstaf.github.io/hpc-intro/css/highlight.css" type="text/css" />
+
+	
+
+	<link rel="shortcut icon" href="https://jstaf.github.io/hpc-intro/favicon.ico" type="image/x-icon"/>
+</head>
+
+	<body role="document">
+		<div class="document">
+			<div class="documentwrapper">
+				<div class="bodywrapper">
+					<div class="body" role="main">
+						
+	<h1>Scheduling jobs</h1>
+	
+	
+
+<p>An HPC system might have thousands of nodes and thousands of users.
+How do we decide who gets what and when?
+How do we ensure that a task is run with the resources it needs?
+This job is handled by a special piece of software called the scheduler.
+On an HPC system, the scheduler manages which jobs run where and when.</p>
+
+<p>The scheduler used in this lesson is SLURM.
+Although SLURM is not used everywhere,
+running jobs is quite similar regardless of what software is being used.
+The exact syntax might change, but the concepts remain the same.</p>
+
+<h2 id="running-a-batch-job">Running a batch job</h2>
+
+<p>The most basic use of the scheduler is to run a command non-interactively.
+This is also referred to as batch job submission.
+In this case, a job is just a shell script.
+Let&rsquo;s create a demo shell script to run as a test.</p>
+
+<div class="admonition ">
+<p class="first admonition-title">Creating our test job</p>
+<p>Using your favorite text editor, create the following script and run it.
+Does it run on the cluster or just our login node?</p>
+
+<pre><code>#!/bin/bash
+
+echo 'This script is running on:'
+hostname
+sleep 120
+</code></pre>
+</p>
+</div>
+
+<p>If you completed the previous challenge successfully,
+you probably realize that there is a distinction between
+running the job through the scheduler and just &ldquo;running it&rdquo;.
+To submit this job to the scheduler, we use the <code>sbatch</code> command.</p>
+
+<pre><code>sbatch example-job.sh
+</code></pre>
+
+<pre><code>Submitted batch job 36855
+</code></pre>
+
+<p>And that&rsquo;s all we need to do to submit a job.
+To check on our job&rsquo;s status, we use the command <code>squeue</code>.</p>
+
+<pre><code>squeue -u yourUsername
+</code></pre>
+
+<pre><code>   JOBID     USER ACCOUNT           NAME  ST REASON    START_TIME                TIME  TIME_LEFT NODES CPU
+S
+   36856 yourUsername yourAccount example-job.sh   R None      2017-07-01T16:47:02       0:11      59:49     1
+1
+</code></pre>
+
+<p>We can see all the details of our job, most importantly that it is in the &ldquo;R&rdquo; or &ldquo;RUNNING&rdquo; state.
+Sometimes our jobs might need to wait in a queue (&ldquo;PENDING&rdquo;) or have an error.
+The best way to check our job&rsquo;s status is with <code>squeue</code>.
+Of course, running <code>squeue</code> repeatedly to check on things can be a little tiresome.
+To see a real-time view of our jobs, we can use the <code>watch</code> command.
+<code>watch</code> reruns a given command at 2-second intervals.
+Let&rsquo;s try using it to monitor another job.</p>
+
+<pre><code>sbatch example-job.sh
+watch squeue -u yourUsername
+</code></pre>
+
+<p>You should see an auto-updating display of your job&rsquo;s status.
+When it finishes, it will disappear from the queue.
+Press <code>Ctrl-C</code> when you want to stop the <code>watch</code> command.</p>
+
+<h2 id="customizing-a-job">Customizing a job</h2>
+
+<p>The job we just ran used all of the schedulers default options.
+In a real-world scenario, that&rsquo;s probably not what we want.
+The default options represent a reasonable minimum.
+Chances are, we will need more cores, more memory, more time,
+among other special considerations.
+To get access to these resources we must customize our job script.</p>
+
+<p>Comments in UNIX (denoted by <code>#</code>) are typically ignored.
+But there are exceptions.
+For instance the special <code>#!</code> comment at the beginning of scripts
+specifies what program should be used to run it (typically <code>/bin/bash</code>).
+Schedulers like SLURM also have a special comment used to denote special
+scheduler-specific options.
+Though these comments differ from scheduler to scheduler,
+SLURM&rsquo;s special comment is <code>#SBATCH</code>.
+Anything following the <code>#SBATCH</code> comment is interpreted as an instruction to the scheduler.</p>
+
+<p>Let&rsquo;s illustrate this by example.
+By default, a job&rsquo;s name is the name of the script,
+but the <code>-J</code> option can be used to change the name of a job.</p>
+
+<p>Submit the following job (<code>sbatch example-job.sh</code>):</p>
+
+<pre><code>#!/bin/bash
+#SBATCH -J new_name
+
+echo 'This script is running on:'
+hostname
+sleep 120
+</code></pre>
+
+<pre><code>squeue -u yourUsername
+</code></pre>
+
+<pre><code>   JOBID     USER ACCOUNT           NAME  ST REASON    START_TIME                TIME  TIME_LEFT NODES CPUS
+   38191 yourUsername yourAccount       new_name  PD Priority  N/A                       0:00    1:00:00     1  1
+</code></pre>
+
+<p>Fantastic, we&rsquo;ve successfully changed the name of our job!</p>
+
+<div class="admonition ">
+<p class="first admonition-title">Setting up email notifications</p>
+<p>Jobs on an HPC system might run for days or even weeks.
+We probably have better things to do than constantly check on the status of our job
+with <code>squeue</code>.
+Looking at the <a href="https://slurm.schedmd.com/sbatch.html">online documentation for <code>sbatch</code></a>
+(you can also google &ldquo;sbatch slurm&rdquo;),
+can you set up our test job to send you an email when it finishes?</p>
+
+<p>Hint: you will need to use the <code>--mail-user</code> and <code>--mail-type</code> options.</p>
+</div>
+
+<h3 id="resource-requests">Resource requests</h3>
+
+<p>But what about more important changes, such as the number of CPUs and memory for our jobs?
+One thing that is absolutely critical when working on an HPC system is specifying the
+resources required to run a job.
+This allows the scheduler to find the right time and place to schedule our job.
+If you do not specify requirements (such as the amount of time you need),
+you will likely be stuck with your site&rsquo;s default allocation,
+which is not what we want.</p>
+
+<p>The following are several key resource requests:</p>
+
+<ul>
+<li><p><code>-c &lt;ncpus&gt;</code> - How many CPUs does your job need?</p></li>
+
+<li><p><code>--mem=&lt;megabytes&gt;</code> - How much memory on a node does your job need in megabytes? You can also specify gigabytes using by adding a little &ldquo;g&rdquo; afterwards (example: <code>--mem=5g</code>)</p></li>
+
+<li><p><code>--time &lt;days-hours:minutes:seconds&gt;</code> - How much real-world time (walltime) will your job take to run? The <code>&lt;days&gt;</code> part can be omitted.</p></li>
+</ul>
+
+<div class="admonition ">
+<p class="first admonition-title">Submitting resource requests</p>
+<p>Submit a job that will use 2 cpus, 4 gigabytes of memory, and 5 minutes of walltime.</p>
+</div>
+
+<div class="admonition ">
+<p class="first admonition-title">Job environment variables</p>
+<p>When SLURM runs a job, it sets a number of environment variables for the job.
+One of these will let us check our work from the last problem.
+The <code>SLURM_CPUS_PER_TASK</code> variable is set to the number of CPUs we requested with <code>-c</code>.
+Using the <code>SLURM_CPUS_PER_TASK</code> variable,
+modify your job so that it prints how many CPUs have been allocated.</p>
+</div>
+
+<p>Resource requests are typically binding.
+If you exceed them, your job will be killed.
+Let&rsquo;s use walltime as an example.
+We will request 30 seconds of walltime,
+and attempt to run a job for two minutes.</p>
+
+<pre><code>#!/bin/bash
+#SBATCH -t 0:0:30
+
+echo 'This script is running on:'
+hostname
+sleep 120
+</code></pre>
+
+<p>Submit the job and wait for it to finish.
+Once it is has finished, check the log file.</p>
+
+<pre><code>sbatch example-job.sh
+watch squeue -u yourUsername
+cat slurm-38193.out
+</code></pre>
+
+<pre><code>This job is running on:
+cac096
+slurmstepd: error: *** JOB 38193 ON cac096 CANCELLED AT 2017-07-02T16:35:48 DUE TO TIME LIMIT ***
+</code></pre>
+
+<p>Our job was killed for exceeding the amount of resources it requested.
+Although this appears harsh, this is actually a feature.
+Strict adherence to resource requests allows the scheduler to find the best possible place
+for your jobs.
+Even more importantly,
+it ensures that another user cannot use more resources than they&rsquo;ve been given.
+If another user messes up and accidentally attempts to use all of the CPUs or memory on a node,
+SLURM will either restrain their job to the requested resources or kill the job outright.
+Other jobs on the node will be unaffected.
+This means that one user cannot mess up the experience of others,
+the only jobs affected by a mistake in scheduling will be their own.</p>
+
+<h2 id="canceling-a-job">Canceling a job</h2>
+
+<p>Sometimes we&rsquo;ll make a mistake and need to cancel a job.
+This can be done with the <code>scancel</code> command.
+Let&rsquo;s submit a job and then cancel it using its job number.</p>
+
+<pre><code>sbatch example-job.sh
+squeue -u yourUsername
+</code></pre>
+
+<pre><code>Submitted batch job 38759
+
+   JOBID     USER ACCOUNT           NAME  ST REASON    START_TIME                TIME  TIME_LEFT NODES CPUS
+   38759 yourUsername yourAccount example-job.sh  PD Priority  N/A                       0:00       1:00     1    1
+</code></pre>
+
+<p>Now cancel the job with it&rsquo;s job number.
+Absence of any job info indicates that the job has been successfully canceled.</p>
+
+<pre><code>scancel 38759
+squeue -u yourUsername
+</code></pre>
+
+<pre><code>   JOBID     USER ACCOUNT           NAME  ST REASON    START_TIME                TIME  TIME_LEFT NODES CPUS
+</code></pre>
+
+<div class="admonition ">
+<p class="first admonition-title">Cancelling multiple jobs</p>
+<p>We can also all of our jobs at once using the <code>-u</code> option.
+This will delete all jobs for a specific user (in this case us).
+Note that you can only delete your own jobs.</p>
+
+<p>Try submitting multiple jobs and then cancelling them all with
+<code>scancel -u yourUsername</code>.</p>
+</div>
+
+<h2 id="other-types-of-jobs">Other types of jobs</h2>
+
+<p>Up to this point, we&rsquo;ve focused on running jobs in batch mode.
+SLURM also provides the ability to run tasks as a one-off or start an interactive session.</p>
+
+<p>There are very frequently tasks that need to be done semi-interactively.
+Creating an entire job script might be overkill,
+but the amount of resources required is too much for a login node to handle.
+A good example of this might be building a genome index for alignment with a tool like <a href="https://ccb.jhu.edu/software/hisat2/index.shtml">HISAT2</a>.
+Fortunately, we can run these types of tasks as a one-off with <code>srun</code>.</p>
+
+<p><code>srun</code> runs a single command on the cluster and then exits.
+Let&rsquo;s demonstrate this by running the <code>hostname</code> command with <code>srun</code>.
+(We can cancel an <code>srun</code> job with <code>Ctrl-c</code>.)</p>
+
+<pre><code>srun hostname
+</code></pre>
+
+<pre><code>cac098
+</code></pre>
+
+<p><code>srun</code> accepts all of the same options as <code>sbatch</code>.
+However, instead of specifying these in a script,
+these options are specified on the command-line when starting a job.
+To submit a job that uses 2 cpus for instance,
+we could use the following command
+(note that SLURM&rsquo;s environment variables like <code>SLURM_CPUS_PER_TASK</code> are only available to batch jobs run with <code>sbatch</code>):</p>
+
+<pre><code>srun -c 2 echo &quot;This job will use 2 cpus.&quot;
+</code></pre>
+
+<pre><code>This job will use 2 cpus.
+</code></pre>
+
+<h3 id="interactive-jobs">Interactive jobs</h3>
+
+<p>Sometimes, you will need a lot of resource for interactive use.
+Perhaps it&rsquo;s the first time running an analysis
+or we are attempting to debug something that went wrong with a previous job.
+Fortunately, SLURM makes it easy to start an interactive job with <code>srun</code>:</p>
+
+<pre><code>srun --x11 --pty bash
+</code></pre>
+
+<h2 id="note-for-administrators">Note for administrators</h2>
+
+<p>The <code>--x11</code> option will not work unless the <a href="https://github.com/hautreux/slurm-spank-x11">slurm-spank-x11</a> plugin is installed.
+You should also make sure <code>xeyes</code> is installed as an example X11 app
+(<code>xorg-x11-apps</code> package on CentOS).
+If you do not have these installed, just have students use <code>srun --pty bash</code> instead.
+{: .callout}</p>
+
+<p>You should be presented with a bash prompt.
+Note that the prompt will likely change to reflect your new location,
+in this case the worker node we are logged on.
+You can also verify this with <code>hostname</code>.</p>
+
+<div class="admonition ">
+<p class="first admonition-title">Creating remote graphics</p>
+<p>To demonstrate what happens when you create a graphics window on the remote node,
+use the <code>xeyes</code> command.
+A relatively adorable pair of eyes should pop up (press <code>Ctrl-c</code> to stop).</p>
+
+<p>Note that this command requires you to have connected with X-forwarding enabled
+(<code>ssh -X username@host.address.ca</code>).</p>
+</div>
+
+<p>When you are done with the interactive job, type <code>exit</code> to quit your session.</p>
+
+<h2 id="next-section-modules"><a href="../modules/">Next section</a></h2>
+
+
+
+						
+					</div>
+				</div>
+			</div>
+			
+			<div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+	<div class="sphinxsidebarwrapper">
+		<p class="logo">
+			<a href="https://jstaf.github.io/hpc-intro/">
+				<img class="logo" src="https://jstaf.github.io/hpc-intro/favicon.ico" alt="Logo"/>
+				<h1 class="logo logo-name">Intro to HPC</h1>
+			</a>
+		</p>
+		
+		<p class="blurb">Running jobs on a cluster</p>
+
+		
+
+	
+
+	
+
+	
+		
+
+		
+
+<h3>Navigation</h3>
+<ul>
+	
+	<li class="toctree-l1">
+		<a class="reference internal" href="/hpc-intro/">Intro to High-Performance Computing</a>
+	</li>
+	
+	<li class="toctree-l1">
+		<a class="reference internal" href="/hpc-intro/cluster/">What is a cluster</a>
+	</li>
+	
+	<li class="toctree-l1">
+		<a class="reference internal" href="/hpc-intro/scheduler/">Scheduling jobs</a>
+	</li>
+	
+	<li class="toctree-l1">
+		<a class="reference internal" href="/hpc-intro/modules/">Accessing software</a>
+	</li>
+	
+	<li class="toctree-l1">
+		<a class="reference internal" href="/hpc-intro/transferring-files/">Transferring Files</a>
+	</li>
+	
+	<li class="toctree-l1">
+		<a class="reference internal" href="/hpc-intro/resources/">Using resources effectively</a>
+	</li>
+	
+</ul>
+
+
+		<h3>Related Topics</h3>
+<ul>
+  <li><a href="https://jstaf.github.io/hpc-intro/">Documentation overview</a><ul>
+  
+  
+</ul>
+
+	</div>
+</div>
+<div class="clearer"></div>
+</div>
+			<div class="footer">
+	&copy; 2017 <a href="https://github.com/jstaf">Jeff Stafford</a>
+	|
+	Powered by <a href="http://gohugo.io/">Hugo 0.24.1</a>
+	&amp; <a href="https://github.com/digitalcraftsman/hugo-alabaster-theme">Alabaster</a>
+	
+</div>
+
+
+
+
+			
+
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.3.0/highlight.min.js"></script>
+			<script>hljs.initHighlightingOnLoad();</script>
+			
+
+			
+		</div>
+	</body>
+</html>

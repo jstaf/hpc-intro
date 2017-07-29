@@ -25,7 +25,7 @@ Some additional details:
 
 * You want to go get the genome through the "Download DNA Sequence" link
 * We are interested in the `Drosophila_melanogaster.BDGP6.dna.toplevel.fa.gz` file.
-{{</admonition>
+{{</admonition>}}
 
 ## Working with compressed files
 
