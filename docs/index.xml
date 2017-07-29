@@ -16,7 +16,9 @@
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://jstaf.github.io/hpc-intro/</guid>
-      <description>placeholder</description>
+      <description>This is a short 3-hour tutorial designed to teach the basics of using a high-performance computing cluster. This tutorial focuses on SLURM as a scheduler and the Lmod modules system, but the general concepts are applicable to any HPC installation.
+Setup This tutorial assumes that you have an SSH client pre-installed.
+Windows - Though any SSH client will work, we recommend using MobaXterm. The reason for this is that it has a built-in file browser, X server, and local bash shell- all things that can be a little tricky to setup on Windows otherwise.</description>
     </item>
     
     <item>

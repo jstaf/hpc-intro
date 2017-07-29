@@ -115,7 +115,100 @@ We can simply just add a <code>:</code> and leave it at that if we don&rsquo;t c
 Or perhaps we&rsquo;re simply not sure which files we want to tranfer yet.
 <code>sftp</code> is an interactive way of downloading and uploading files.
 To connect to a cluster, we use the command <code>sftp yourUsername@remote.computer.address</code>.
-This will start what appears to be a bash shell.</p>
+This will start what appears to be a bash shell (though our prompt says <code>sftp&gt;</code>).
+However we only have access to a limited number of commands.</p>
+
+<p>We can see which commands are available with <code>help</code>:</p>
+
+<pre><code>help
+</code></pre>
+
+<pre><code>Available commands:
+bye                                Quit sftp
+cd path                            Change remote directory to 'path'
+chgrp grp path                     Change group of file 'path' to 'grp'
+chmod mode path                    Change permissions of file 'path' to 'mode'
+chown own path                     Change owner of file 'path' to 'own'
+df [-hi] [path]                    Display statistics for current directory or
+                                   filesystem containing 'path'
+exit                               Quit sftp
+get [-afPpRr] remote [local]       Download file
+reget [-fPpRr] remote [local]      Resume download file
+reput [-fPpRr] [local] remote      Resume upload file
+help                               Display this help text
+lcd path                           Change local directory to 'path'
+lls [ls-options [path]]            Display local directory listing
+lmkdir path                        Create local directory
+ln [-s] oldpath newpath            Link remote file (-s for symlink)
+lpwd                               Print local working directory
+ls [-1afhlnrSt] [path]             Display remote directory listing
+
+# omitted further output for brevity
+</code></pre>
+
+<p>Notice the presence of multiple commands that make mention of local and remote.
+We are actually connected to two computers at once (with two working directories!).</p>
+
+<p>To show our remote working directory:</p>
+
+<pre><code>pwd
+</code></pre>
+
+<pre><code>Remote working directory: /global/home/yourUsername
+</code></pre>
+
+<p>To show our local working directory, we add an <code>l</code> in front of the command:</p>
+
+<pre><code>lpwd
+</code></pre>
+
+<pre><code>Local working directory: /home/jeff/Documents/teaching/hpc-intro
+</code></pre>
+
+<p>The same pattern follows for all other commands:</p>
+
+<ul>
+<li><code>ls</code> shows the contents of our remote directory, while <code>lls</code> shows our local directory contents.</li>
+<li><code>cd</code> changes the remote directory, <code>lcd</code> changes the local one.</li>
+</ul>
+
+<p>To upload a file, we type <code>put some-file.txt</code> (tab-completion works here).</p>
+
+<pre><code>put config.toml
+</code></pre>
+
+<pre><code>Uploading config.toml to /global/home/yourUsername/config.toml
+config.toml                                   100%  713     2.4KB/s   00:00 
+</code></pre>
+
+<p>To download a file we type <code>get some-file.txt</code>:</p>
+
+<pre><code>get config.toml
+</code></pre>
+
+<pre><code>Fetching /global/home/yourUsername/config.toml to config.toml
+/global/home/yourUsername/config.toml                               100%  713     9.3KB/s   00:00 
+</code></pre>
+
+<p>And we can recursively put/get files by just adding <code>-r</code>.
+Note that the directory needs to be present beforehand.</p>
+
+<pre><code>mkdir content
+put -r content/
+</code></pre>
+
+<pre><code>Uploading content/ to /global/home/yourUsername/content
+Entering content/
+content/scheduler.md              100%   11KB  21.4KB/s   00:00    
+content/index.md                  100% 1051     7.2KB/s   00:00    
+content/transferring-files.md     100% 6117    36.6KB/s   00:00    
+content/.transferring-files.md.sw 100%   24KB  28.4KB/s   00:00    
+content/cluster.md                100% 5542    35.0KB/s   00:00    
+content/modules.md                100%   17KB 158.0KB/s   00:00    
+content/resources.md              100% 1115    29.9KB/s   00:00    
+</code></pre>
+
+<p>To quit, we type <code>exit</code> or <code>bye</code>.</p>
 
 <h2 id="transferring-files-interactively-with-filezilla-sftp">Transferring files interactively with FileZilla (sftp)</h2>
 

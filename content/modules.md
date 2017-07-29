@@ -407,5 +407,5 @@ Command: seq       common transformation of FASTA/Q
 
 We've successfully installed our first piece of software!
 
-## [Next section](../resources/)
+## [Next section](../tranferring-files/)
 
